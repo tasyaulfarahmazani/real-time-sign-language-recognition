@@ -1,3 +1,4 @@
+from html import parser
 import os
 import cv2
 import mediapipe as mp
@@ -222,7 +223,12 @@ def extract_dataset_features(
 
 
 # ─── Training ─────────────────────────────────────────────────────────────────
-def train_model(train_csv: str, val_csv: str, model_output_path: str):
+def train_model(
+    train_csv: str,
+    val_csv: str,
+    model_output_path: str,
+    dataset_type: str
+):
     logging.info("Memuat data fitur...")
     train_df = pd.read_csv(train_csv)
     val_df   = pd.read_csv(val_csv)
@@ -293,6 +299,15 @@ def train_model(train_csv: str, val_csv: str, model_output_path: str):
     y_pred_decoded = le.inverse_transform(y_pred_enc)
 
     logging.info(f"Validation Accuracy: {acc * 100:.2f}%")
+    # Grafik Akurasi Training vs Validation
+    plot_accuracy_graph(
+    search,
+    X_train,
+    y_train_enc,
+    X_val,
+    y_val_enc,
+    dataset_type
+    )
     logging.info(
         "\nClassification Report:\n"
         + classification_report(y_val, y_pred_decoded)
@@ -324,62 +339,134 @@ def train_model(train_csv: str, val_csv: str, model_output_path: str):
     logging.info("Pipeline training selesai!")
 
 
+def plot_accuracy_graph(
+    search,
+    X_train,
+    y_train_enc,
+    X_val,
+    y_val_enc,
+    dataset_type
+):
+    """
+    Membuat grafik perbandingan akurasi training dan validation
+    dari model terbaik.
+    """
+
+    best_model = search.best_estimator_
+
+    train_acc = best_model.score(X_train, y_train_enc)
+    val_acc = best_model.score(X_val, y_val_enc)
+
+    labels = ["Training", "Validation"]
+    scores = [train_acc * 100, val_acc * 100]
+
+    plt.figure(figsize=(8,5))
+    bars = plt.bar(labels, scores)
+
+    plt.ylim(0, 100)
+    plt.ylabel("Accuracy (%)")
+    plt.xlabel("Dataset")
+    plt.title("Model Accuracy Comparison")
+
+    for bar, score in zip(bars, scores):
+        plt.text(
+            bar.get_x() + bar.get_width()/2,
+            bar.get_height(),
+            f"{score:.2f}%",
+            ha="center",
+            va="bottom"
+        )
+
+    plt.tight_layout()
+
+    acc_path = f"results/{dataset_type}_accuracy.png"
+    plt.savefig(acc_path)
+    plt.close()
+
+    logging.info(f"Grafik akurasi disimpan ke {acc_path}")
+    
+
 # ─── Entry point ──────────────────────────────────────────────────────────────
 def main():
+
     parser = argparse.ArgumentParser(
         description="Hand Sign Recognition – MediaPipe Tasks API + RF/XGBoost"
     )
-    parser.add_argument("--train_dir",  default="dataset/images/train")
-    parser.add_argument("--val_dir",    default="dataset/images/val")
-    parser.add_argument("--model_out",  default="models/best_rf_model.joblib")
+
     parser.add_argument(
         "--workers",
         type=int,
-        default=max(1, os.cpu_count() - 1),
-        help="Jumlah thread untuk ekstraksi fitur",
+        default=max(1, os.cpu_count() - 1)
     )
+
     parser.add_argument(
         "--force_extract",
-        action="store_true",
-        help="Paksa ekstraksi ulang meski CSV sudah ada",
+        action="store_true"
     )
+
     parser.add_argument(
         "--model_file",
-        default=HAND_LANDMARKER_MODEL,
-        help="Path ke file hand_landmarker.task",
+        default=HAND_LANDMARKER_MODEL
     )
+
     args = parser.parse_args()
 
-    train_csv = "train_features.csv"
-    val_csv   = "val_features.csv"
 
-    # Pastikan model MediaPipe sudah ada
+    # download model sekali
     download_model_if_needed(args.model_file)
 
-    # Ekstraksi fitur training
-    if not os.path.exists(train_csv) or args.force_extract:
-        logging.info("Ekstraksi fitur training...")
-        extract_dataset_features(
-            args.train_dir, train_csv, args.workers, args.model_file
+
+    # train dua dataset
+    for dataset_type in ["alphabet", "number"]:
+
+        print("\n==============================")
+        print(f" TRAINING {dataset_type.upper()} ")
+        print("==============================\n")
+
+
+        train_dir = f"../dataset/static/{dataset_type}/train"
+        val_dir = f"../dataset/static/{dataset_type}/val"
+
+        train_csv = f"../features/{dataset_type}_train_features.csv"
+        val_csv = f"../features/{dataset_type}_val_features.csv"
+
+        model_out = f"../models/static/{dataset_type}_rf.joblib"
+
+
+        # ekstraksi train
+        if not os.path.exists(train_csv) or args.force_extract:
+
+            extract_dataset_features(
+                train_dir,
+                train_csv,
+                args.workers,
+                args.model_file
+            )
+
+
+        # ekstraksi val
+        if not os.path.exists(val_csv) or args.force_extract:
+
+            extract_dataset_features(
+                val_dir,
+                val_csv,
+                args.workers,
+                args.model_file
+            )
+
+
+        # training
+        train_model(
+        train_csv,
+        val_csv,
+        model_out,
+        dataset_type
         )
-    else:
-        logging.info(f"'{train_csv}' sudah ada. Lewati. (--force_extract untuk paksa ulang)")
 
-    # Ekstraksi fitur validasi
-    if not os.path.exists(val_csv) or args.force_extract:
-        logging.info("Ekstraksi fitur validasi...")
-        extract_dataset_features(
-            args.val_dir, val_csv, args.workers, args.model_file
+
+        print(
+            f"\nSELESAI TRAIN {dataset_type.upper()}\n"
         )
-    else:
-        logging.info(f"'{val_csv}' sudah ada. Lewati.")
-
-    # Training
-    if os.path.exists(train_csv) and os.path.exists(val_csv):
-        train_model(train_csv, val_csv, args.model_out)
-    else:
-        logging.error("CSV fitur tidak lengkap. Training dibatalkan.")
-
-
+        
 if __name__ == "__main__":
     main()

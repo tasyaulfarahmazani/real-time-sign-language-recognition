@@ -4,7 +4,7 @@ import os
 # =========================
 # INPUT LABEL
 # =========================
-label = input("Masukkan label (contoh: A / 0 / halo / makan): ").strip()
+label = input("Masukkan label (contoh: A / 0): ").strip()
 
 # Validasi kosong
 if label == "":

@@ -4,6 +4,7 @@ import numpy as np
 import joblib
 import logging
 import os
+import argparse
 
 from mediapipe.tasks import python as mp_python
 from mediapipe.tasks.python import vision as mp_vision
@@ -75,9 +76,8 @@ def extract_features(hand_landmarks_list, handedness_list):
     return features
 
 
-def main():
-    # ── Load model ────────────────────────────────────────────────────────────
-    model_path = "models/best_rf_model.joblib"
+def main(mode):
+    model_path = f"../models/static/{mode}_rf.joblib"
     try:
         loaded = joblib.load(model_path)
         if isinstance(loaded, dict) and "model" in loaded and "label_encoder" in loaded:
@@ -184,4 +184,15 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--mode",
+        choices=["alphabet", "number"],
+        default="alphabet"
+    )
+    args = parser.parse_args()
+
+    main(args.mode)
+    
+    MODE = args.mode
+    model_path = f"../models/static/{MODE}_rf.joblib"

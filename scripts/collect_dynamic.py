@@ -16,7 +16,7 @@ if label == "":
 # CONFIG
 # =========================
 SEQUENCE_LENGTH = 30
-NUM_SEQUENCES = 30
+NUM_SEQUENCES = 100
 
 SAVE_PATH = f"dataset/dynamic/{label}"
 

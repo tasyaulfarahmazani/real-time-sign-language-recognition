@@ -7,10 +7,10 @@ from tensorflow.keras.models import load_model
 # =========================
 # LOAD MODEL
 # =========================
-model = load_model("models/dynamic_lstm.keras")
+model = load_model("../models/dynamic/dynamic_gru.keras")
 
 labels = np.load(
-    "models/dynamic_labels.npy",
+    "../models/dynamic/dynamic_labels.npy",
     allow_pickle=True
 )
 
