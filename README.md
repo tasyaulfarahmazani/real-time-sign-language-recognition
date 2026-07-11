@@ -1,4 +1,4 @@
-# 🤟 Real-Time Sign Language Recognition
+# Real-Time Sign Language Recognition
 
 <p align="center">
   <img src="assets/banner.png" alt="Project Banner" width="100%">
@@ -21,7 +21,7 @@ A real-time Indonesian Sign Language Recognition System built with Computer Visi
 
 ---
 
-# 📑 Table of Contents
+# Table of Contents
 
 - Overview
 - Demo
@@ -40,7 +40,7 @@ A real-time Indonesian Sign Language Recognition System built with Computer Visi
 
 ---
 
-# 📖 Overview
+# Overview
 
 This project recognizes Indonesian Sign Language in real time using a webcam.
 
@@ -59,19 +59,24 @@ MediaPipe extracts 21 hand landmarks. Random Forest classifies static gestures w
 
 ---
 
-# 🎥 Demo
+# 🎥 Demo Video
 
-> Add your demo GIF here.
+Watch the complete project demonstration on YouTube.
 
-```md
 <p align="center">
-<img src="docs/demo.gif" width="900">
+<a href="https://youtu.be/zqoIxfDtjvw">
+<img src="https://img.youtube.com/vi/zqoIxfDtjvw/hqdefault.jpg" width="850">
+</a>
+</p>
+
+<p align="center">
+<b>▶ Click the image above to watch the full demonstration.</b>
 </p>
 ```
 
 ---
 
-# ✨ Features
+# Features
 
 | Feature | Status |
 |---|:---:|
@@ -85,7 +90,7 @@ MediaPipe extracts 21 hand landmarks. Random Forest classifies static gestures w
 
 ---
 
-# 📊 Model Performance
+# Model Performance
 
 | Task | Model | Training | Validation |
 |---|---|---:|---:|
@@ -95,7 +100,7 @@ MediaPipe extracts 21 hand landmarks. Random Forest classifies static gestures w
 
 ---
 
-# 📈 Results
+# Results
 
 ## Alphabet
 ![](results/alphabet_accuracy.png)
@@ -120,7 +125,7 @@ MediaPipe extracts 21 hand landmarks. Random Forest classifies static gestures w
 
 ---
 
-# 🛠 Technology Stack
+# Technology Stack
 
 - Python
 - OpenCV
@@ -136,7 +141,7 @@ MediaPipe extracts 21 hand landmarks. Random Forest classifies static gestures w
 
 ---
 
-# 🏗 System Architecture
+# System Architecture
 
 ```text
 Webcam
@@ -161,7 +166,7 @@ Feature Extraction
 
 ---
 
-# 🧠 Machine Learning Pipeline
+# Machine Learning Pipeline
 
 ## Static
 
@@ -173,28 +178,45 @@ Image → MediaPipe → Landmark Extraction → Position & Scale Normalization �
 
 ---
 
-# 📂 Dataset
+## Dataset
 
-### Alphabet
-- Kaggle Dataset
+This project uses two different data sources.
 
-### Numbers
-- Self-collected using webcam.
+### Alphabet Dataset
 
-### Words
+The alphabet dataset was obtained from Kaggle and contains static hand gesture images representing the Indonesian Sign Language alphabet.
+
+**Source:**
+https://www.kaggle.com/code/dataguy1234567899/sign-language
+
+---
+
+### Number Dataset
+
+The number dataset was collected manually using a webcam. Multiple hand poses were recorded under different positions and lighting conditions to improve model robustness.
+
+---
+
+### Dynamic Word Dataset
+
+The dynamic dataset was created manually using a webcam.
+
+Recognized words:
+
 - Damai
 - Lembu
 - Percaya
 - Rumah
 - Teman
 
-Each word:
+Each word consists of:
+
 - 100 sequences
 - 30 frames per sequence
 
 ---
 
-# 📁 Project Structure
+# Project Structure
 
 ```text
 real-time-sign-language-recognition/
@@ -209,7 +231,7 @@ real-time-sign-language-recognition/
 
 ---
 
-# 🚀 Installation
+# Installation
 
 ```bash
 git clone https://github.com/tasyaulfarahmazani/real-time-sign-language-recognition.git
@@ -226,7 +248,7 @@ http://127.0.0.1:8000
 
 ---
 
-# 🔌 API
+# API
 
 | Endpoint | Method | Description |
 |---|---|---|
@@ -235,7 +257,7 @@ http://127.0.0.1:8000
 
 ---
 
-# 🚀 Future Improvements
+# Future Improvements
 
 - More BISINDO vocabulary
 - Sentence recognition
@@ -245,12 +267,12 @@ http://127.0.0.1:8000
 
 ---
 
-# 👩‍💻 Author
+# Author
 
 **Tasya Ulfa Rahmazani**
 
 Informatics Engineering Student  
-Department of Information and Computer Technology  
+Majoring in Information and Computer Technology  
 Politeknik Negeri Lhokseumawe
 
 - GitHub: https://github.com/tasyaulfarahmazani
