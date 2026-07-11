@@ -54,7 +54,7 @@ confusion_matrix.png
 node_modules/
 
 # Ignore semua model hasil training
-models/
+/models/
 
 # Ignore semua dataset mentah
 dataset/
